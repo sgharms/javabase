@@ -2,30 +2,53 @@
 $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'rubygems'
 require 'gli'
+require 'pp'
 
 include GLI
 
-desc 'Describe some switch here'
-switch [:s,:switch]
 
-desc 'Describe some flag here'
-default_value 'the default'
-arg_name 'The name of the argument'
-flag [:f,:flagname]
 
-desc 'Describe create here'
-arg_name 'Describe arguments to create here'
+desc 'Dry-Run Only?  Make no changes on disk.'
+default_value 'false'
+arg_name '[true|false]'
+switch [:d,'dry-run'.to_sym]
+
+desc 'Creates the basic structure for a Java application e.g. src/main/java/... and src/test/java e.g. com.exampledomain.javamonkey'
 command :create do |c|
-  c.desc 'Describe a switch to create'
-  c.switch :s
+  c.desc 'Package Name e.g. com.exampledomain.javamonkey'  
+  c.flag :pkg
+  
+  c.desc 'Classes (with test classes) to be created (no need for .java extension)'
+  c.flag :class
 
-  c.desc 'Describe a flag to create'
-  c.default_value 'default'
-  c.flag :s
+
   c.action do |global_options,options,args|
+    STDOUT.puts "You didn't provide any packaging information, this means " + 
+    "you probably just want to generate some classes" unless options[:pkg]
 
-    # Your command logic here
+    unless options[:pkg].nil?
+      # Command logic here
+      pkg_path = options[:pkg].gsub(".","/")
+    
+      paths = %w{lib src}
+    
+      %w{main test}.each do |tld|
+        paths.push("src/#{tld}/#{pkg_path}")
+      end
+
+      paths.each do |p|
+        puts p
+        mkdir_p p.to_s unless global_options[:d]
+      end
+    end
+    
+    if options[:class]
+       classes = options[:class].split(/[\s,]/)
+       classes.each{|c| scaffold_classes([global_options, options, args],"TODO/","#{c}.java")}
+       classes.each{|c| scaffold_test_classes([global_options, options, args],"TODO/","#{c}Test.java")}  
+    end
      
+    
     # If you have any errors, just raise them
     # raise "that command made no sense"
   end
@@ -46,6 +69,68 @@ on_error do |exception|
   # Error logic here
   # return false to skip default error handling
   true
+end
+
+def scaffold_classes(struct,path,classname) 
+  if struct[0][:d]
+    scaffold_class(:STDOUT, struct, classname)
+  end
+end
+
+def scaffold_test_classes(struct,path,classname)
+  if struct[0][:d]
+    scaffold_test_class(:STDOUT, struct, classname)
+  end
+end
+
+def scaffold_class(file, struct, c )  
+  class_name = c.sub(/\..*/, '')
+  class_scaffold = <<EOF
+#{struct[1][:pkg] ? "package #{struct[1][:pkg]};" : "// No packaging info presented to javaBase"}
+
+public class #{class_name}{
+  // Instance Variables go Here
+  
+  // Main Method (or delete it if you don't need it!)
+  public static void main (String[] args){
+    #{class_name} a#{class_name}Instance = new #{class_name}();
+  }
+}
+
+EOF
+  
+  if file == :STDOUT
+    print "=" * 80 + "\n"
+    header = "STDOUT demonstration of classes to be created"
+    print (" " * (40 - header.length/2)) + header + "\n"
+    print "=" * 80 + "\n"
+    puts class_scaffold
+  end
+end
+
+def scaffold_test_class (file, struct, c )  
+  class_name = c.sub(/\..*/, '')
+  test_class_scaffold =<<EOF
+#{struct[1][:pkg] ? "package #{struct[1][:pkg]};" : "// No packaging info presented to javaBase"}
+
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class #{class_name}{
+  @Test
+  public void testOne(){
+    assertTrue("This test fails, write your tests firsts!", false);
+  }
+}
+EOF
+  if file == :STDOUT
+    print "=" * 80 + "\n"
+    header = "STDOUT demonstration of **TEST** classes to be created"
+    print (" " * (40 - header.length/2)) + header + "\n"
+    print "=" * 80 + "\n"
+    puts test_class_scaffold
+  end
 end
 
 GLI.run(ARGV)
