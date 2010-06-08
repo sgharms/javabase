@@ -18,7 +18,7 @@ command :create do |c|
   c.desc 'Package Name e.g. com.exampledomain.javamonkey'  
   c.flag :pkg
   
-  c.desc 'Classes (with test classes) to be created (no need for .java extension)'
+  c.desc 'Classes (with test classes) to be created (no need for .java extension) separated by spaces'
   c.flag :class
 
 
