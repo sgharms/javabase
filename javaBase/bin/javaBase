@@ -3,6 +3,7 @@ $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'rubygems'
 require 'gli'
 require 'pp'
+require 'fileutils'
 
 include GLI
 
@@ -18,13 +19,13 @@ command :create do |c|
   c.desc 'Package Name e.g. com.exampledomain.javamonkey'  
   c.flag :pkg
   
-  c.desc 'Classes (with test classes) to be created (no need for .java extension) separated by spaces'
+  c.desc 'Class (with test classes) to be created (no need for .java extension) separated by spaces'
   c.flag :class
 
 
   c.action do |global_options,options,args|
-    STDOUT.puts "You didn't provide any packaging information, this means " + 
-    "you probably just want to generate some classes" unless options[:pkg]
+    puts "You didn't provide any packaging information.  I think this means\n" + 
+    "you want to generate some classes in the current directory." unless options[:pkg]
 
     unless options[:pkg].nil?
       # Command logic here
@@ -33,19 +34,20 @@ command :create do |c|
       paths = %w{lib src}
     
       %w{main test}.each do |tld|
-        paths.push("src/#{tld}/#{pkg_path}")
+        paths.push("src/#{tld}/java/#{pkg_path}")
       end
 
       paths.each do |p|
-        puts p
-        mkdir_p p.to_s unless global_options[:d]
+        puts "Creating [#{p}]"
+        FileUtils::mkdir_p p.to_s unless global_options[:d]
       end
     end
     
     if options[:class]
        classes = options[:class].split(/[\s,]/)
-       classes.each{|c| scaffold_classes([global_options, options, args],"TODO/","#{c}.java")}
-       classes.each{|c| scaffold_test_classes([global_options, options, args],"TODO/","#{c}Test.java")}  
+       classes.each{|c| scaffold_classes([global_options, options, args],
+          ["src/main/java",pkg_path],"#{c}.java")}
+       classes.each{|c| scaffold_test_classes([global_options, options, args],"src/test/java/#{pkg_path}/","#{c}Test.java")}  
     end
      
     
@@ -72,14 +74,22 @@ on_error do |exception|
 end
 
 def scaffold_classes(struct,path,classname) 
+  puts "!" + [path, classname].flatten.compact.join("/")
   if struct[0][:d]
     scaffold_class(:STDOUT, struct, classname)
+  else
+    STDERR.puts "Did not get the dry-run flag[1]"
+    scaffold_class(path, struct, classname)
   end
+
 end
 
 def scaffold_test_classes(struct,path,classname)
   if struct[0][:d]
     scaffold_test_class(:STDOUT, struct, classname)
+  else
+    STDERR.puts "Did not get the dry-run flag[2]"
+    scaffold_test_class(path, struct, classname)
   end
 end
 
@@ -94,6 +104,12 @@ public class #{class_name}{
   // Main Method (or delete it if you don't need it!)
   public static void main (String[] args){
     #{class_name} a#{class_name}Instance = new #{class_name}();
+    a#{class_name}Instance.sayHello();
+  }
+  
+  public void sayHello()
+  {
+    System.out.println("Hello, World, I'm a #{class_name} skeleton!'");
   }
 }
 
@@ -105,6 +121,11 @@ EOF
     print (" " * (40 - header.length/2)) + header + "\n"
     print "=" * 80 + "\n"
     puts class_scaffold
+  else
+    # STDERR.puts "Writing to #{c}"
+    open(c,"w") do |f|
+      f.puts class_scaffold
+    end
   end
 end
 
@@ -120,7 +141,7 @@ import static org.junit.Assert.*;
 public class #{class_name}{
   @Test
   public void testOne(){
-    assertTrue("This test fails, write your tests firsts!", false);
+    assertTrue("This test fails, write your tests first!", false);
   }
 }
 EOF
@@ -130,6 +151,11 @@ EOF
     print (" " * (40 - header.length/2)) + header + "\n"
     print "=" * 80 + "\n"
     puts test_class_scaffold
+  else
+    STDERR.puts "Writing to #{c}"
+    open(c,"w") do |f|
+      f.puts test_class_scaffold
+    end
   end
 end
 
