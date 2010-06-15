@@ -1,0 +1,7 @@
+./javaBase ==> Help Screen
+./javaBase help ==> Help Screen
+./javabase help create ==> options for create (--class) and (--pkg)
+./javaBase/bin/javaBase create
+		You didn't provide any packaging information.  I think his means
+		you probably just want to generate some classes in the current directory
+./javaBase/bin/javaBase create --class
