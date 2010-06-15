@@ -158,10 +158,14 @@ EOF
     print "=" * 80 + "\n"
     puts test_class_scaffold
   else
-    STDERR.puts "Writing to #{c}"
+    # STDERR.puts "Writing to #{c}"
     open(c,"w") do |f|
       f.puts test_class_scaffold
     end
+  end
+  
+  if ENV["CLASSPATH"].nil?
+    STDERR.puts "It seems that your CLASSPATH is undefined.  If you attempt to build the test classes this may present an issue."
   end
 end
 
