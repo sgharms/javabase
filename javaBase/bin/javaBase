@@ -25,7 +25,7 @@ command :create do |c|
 
   c.action do |global_options,options,args|
     puts "You didn't provide any packaging information.  I think this means\n" + 
-    "you want to generate some classes in the current directory." unless options[:pkg]
+    "you want to generate some classes in the current directory." + "\n" * 3 unless options[:pkg]
 
     unless options[:pkg].nil?
       # Command logic here
@@ -48,6 +48,10 @@ command :create do |c|
        classes.each{|c| scaffold_classes([global_options, options, args],
           ["src/main/java",pkg_path],"#{c}.java")}
        classes.each{|c| scaffold_test_classes([global_options, options, args],"src/test/java/#{pkg_path}/","#{c}Test.java")}  
+       puts "\n" * 3 +
+            "You now have a basic Java class with JUnit testing support!\n\n" +
+            "Use TDD by:\n\njavac #{c}Test.java && java org.junit.runner.JUnitCore #{c}Test\n"+
+            "\n\nOr, edit your class and then execute:\n\njavac #{c}.java && java #{c}"
     end
      
     
@@ -74,11 +78,12 @@ on_error do |exception|
 end
 
 def scaffold_classes(struct,path,classname) 
-  puts "!" + [path, classname].flatten.compact.join("/")
+  # puts "!" + [path, classname].flatten.compact.join("/")
   if struct[0][:d]
     scaffold_class(:STDOUT, struct, classname)
   else
-    STDERR.puts "Did not get the dry-run flag[1]"
+    # STDERR.puts "Did not get the dry-run flag[1]"
+    puts "Generating ./#{classname}"
     scaffold_class(path, struct, classname)
   end
 
@@ -88,7 +93,8 @@ def scaffold_test_classes(struct,path,classname)
   if struct[0][:d]
     scaffold_test_class(:STDOUT, struct, classname)
   else
-    STDERR.puts "Did not get the dry-run flag[2]"
+    # STDERR.puts "Did not get the dry-run flag[2]"
+    puts "Generating ./#{classname}"
     scaffold_test_class(path, struct, classname)
   end
 end
@@ -109,7 +115,7 @@ public class #{class_name}{
   
   public void sayHello()
   {
-    System.out.println("Hello, World, I'm a #{class_name} skeleton!'");
+    System.out.println("Hello, World, I'm a #{class_name} skeleton!");
   }
 }
 
@@ -141,7 +147,7 @@ import static org.junit.Assert.*;
 public class #{class_name}{
   @Test
   public void testOne(){
-    assertTrue("This test fails, write your tests first!", false);
+    assertTrue("This test fails, write your tests first!  You can fix this by converting false to true, but think about doing good TDD design before you do.", false);
   }
 }
 EOF
