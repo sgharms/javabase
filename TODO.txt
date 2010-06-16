@@ -1,0 +1,9 @@
+* Code is ugly
+
+* Code smells
+
+* Remove those lines that call "TODO/" as a parameter. Somehow I coded around
+  them but never removed them. This is probably bad logic.
+
+* Irony alert: I encouraged the java developers using the output to write
+  tests, yet I have no tests. Bad.
