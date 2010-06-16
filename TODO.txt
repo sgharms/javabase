@@ -9,3 +9,5 @@
   tests, yet I have no tests. Bad.
 
 * Try out running this as a Rubygem with the built-in bundling Dave provided.
+
+* Edit the code so that the output classes wind up going into a sensible output destination, prefiguring the value that Ant brings
