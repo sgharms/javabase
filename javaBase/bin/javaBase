@@ -51,12 +51,12 @@ command :create do |c|
        
        # Only give this sweet message if they didn't use the -d flag
 
-       puts pkg_path
+       # puts pkg_path
        puts "\n" * 3 +
             "You now have a basic Java class with JUnit testing support!\n\n" +
             "Use TDD by:\n\n" +
             "javac #{options[:pkg].nil? ? "./" + c  : "src/test/java/" + options[:pkg].gsub('.','/') + "/" + c }Test.java"+ 
-            " && java #{options[:pkg].nil? ? ""  : "-classpath $CLASSPATH:src/test/java "}org.junit.runner.JUnitCore #{options[:pkg].nil? ? "./" + c  : " " + options[:pkg] + "." + c }Test\n"+
+            " && java #{options[:pkg].nil? ? ""  : "-classpath $CLASSPATH:src/test/java "}org.junit.runner.JUnitCore #{options[:pkg].nil? ? c  : " " + options[:pkg] + "." + c }Test\n"+
             "\n\nThis will **FAIL** initially -- and that's a GOOD thing!"
             "\n\nOr, edit your class and then execute:\n\njavac #{c}.java && java #{c}" unless global_options[:d]
     end

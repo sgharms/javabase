@@ -5,3 +5,34 @@
 		You didn't provide any packaging information.  I think his means
 		you probably just want to generate some classes in the current directory
 ./javaBase/bin/javaBase create --class
+		You didn't provide argument for class=
+		
+./javaBase/bin/javaBase create --class=TigerBar
+	You didn't provide any packaging information.  I think this means
+	you want to generate some classes in the current directory.
+
+
+	Generating ./TigerBar.java
+	Generating ./TigerBarTest.java
+	nil
+
+
+
+	You now have a basic Java class with JUnit testing support!
+
+	Use TDD by:
+
+	javac ./TigerBarTest.java && java org.junit.runner.JUnitCore ./TigerBarTest
+
+
+	This will **FAIL** initially -- and that's a GOOD thing!
+	$ ls -l TigerBar*
+	-rw-r--r--  1 stharms  staff  391 Jun 16 11:07 TigerBar.java
+	-rw-r--r--  1 stharms  staff  360 Jun 16 11:07 TigerBarTest.java
+
+
+
+$ ./javaBase/bin/javaBase create --class="TigerBar" --pkg="com.cisco.stharms"
+
+
+
