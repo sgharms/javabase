@@ -161,6 +161,27 @@ import static org.junit.Assert.*;
 public class #{class_name}{
   @Test
   public void testOne(){
+    /*
+      In an effort to try to teach good coding practice, 
+      this first test fails.  The reason for this is so that
+      you start thinking about writing tests from the get-go 
+      and adopting a TDD methodology.  You can make this
+      test pass by changing 'false' below to true and then 
+      re-executing your build and execute routines.
+      
+      javaBase, the generator gives you the correct chant 
+      when you execute it, probably something like
+    	
+    	javac ./TigerBarTest.java && 
+    	  java org.junit.runner.JUnitCore TigerBarTest
+    	
+      <sermon>
+      Please take this moment to think about how to adopt 
+      TDD methodologies.  Write your tests cases first,
+      designing with tests, derived from user stories in 
+      mind is a way to focus your development effort.
+      </sermon>
+    */
     assertTrue("This test fails, write your tests first!  You can fix this by converting false to true, but think about doing good TDD design before you do.", false);
   }
 }
