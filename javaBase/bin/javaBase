@@ -38,7 +38,7 @@ command :create do |c|
       end
 
       paths.each do |p|
-        puts "Creating [#{p}]"
+        # puts "[Creating] [#{p}]"
         FileUtils::mkdir_p p.to_s unless global_options[:d]
       end
     end
@@ -48,10 +48,17 @@ command :create do |c|
        classes.each{|c| scaffold_classes([global_options, options, args],
           ["src/main/java",pkg_path],"#{c}.java")}
        classes.each{|c| scaffold_test_classes([global_options, options, args],"src/test/java/#{pkg_path}/","#{c}Test.java")}  
+       
+       # Only give this sweet message if they didn't use the -d flag
+
+       puts pkg_path
        puts "\n" * 3 +
             "You now have a basic Java class with JUnit testing support!\n\n" +
-            "Use TDD by:\n\njavac #{c}Test.java && java org.junit.runner.JUnitCore #{c}Test\n"+
-            "\n\nOr, edit your class and then execute:\n\njavac #{c}.java && java #{c}"
+            "Use TDD by:\n\n" +
+            "javac #{options[:pkg].nil? ? "./" + c  : "src/test/java/" + options[:pkg].gsub('.','/') + "/" + c }Test.java"+ 
+            " && java #{options[:pkg].nil? ? ""  : "-classpath $CLASSPATH:src/test/java "}org.junit.runner.JUnitCore #{options[:pkg].nil? ? "./" + c  : " " + options[:pkg] + "." + c }Test\n"+
+            "\n\nThis will **FAIL** initially -- and that's a GOOD thing!"
+            "\n\nOr, edit your class and then execute:\n\njavac #{c}.java && java #{c}" unless global_options[:d]
     end
      
     
@@ -83,7 +90,10 @@ def scaffold_classes(struct,path,classname)
     scaffold_class(:STDOUT, struct, classname)
   else
     # STDERR.puts "Did not get the dry-run flag[1]"
-    puts "Generating ./#{classname}"
+    puts "Generating " + 
+      "#{struct[1][:pkg].nil? ? 
+        "./" + classname : 
+        "src/main/java/" + struct[1][:pkg].gsub('.','/') + "/" + classname}"
     scaffold_class(path, struct, classname)
   end
 
@@ -94,7 +104,10 @@ def scaffold_test_classes(struct,path,classname)
     scaffold_test_class(:STDOUT, struct, classname)
   else
     # STDERR.puts "Did not get the dry-run flag[2]"
-    puts "Generating ./#{classname}"
+    puts "Generating " + 
+      "#{struct[1][:pkg].nil? ? 
+        "./" + classname : 
+        "src/test/java/" + struct[1][:pkg].gsub('.','/') + "/" + classname}"
     scaffold_test_class(path, struct, classname)
   end
 end
@@ -128,8 +141,9 @@ EOF
     print "=" * 80 + "\n"
     puts class_scaffold
   else
-    # STDERR.puts "Writing to #{c}"
-    open(c,"w") do |f|
+    fn = struct[1][:pkg].nil? ? c : "src/main/java/" + struct[1][:pkg].gsub('.','/') + "/#{c}"
+    # STDERR.puts "Writing to #{fn}"
+    open(fn,"w") do |f|
       f.puts class_scaffold
     end
   end
@@ -158,8 +172,9 @@ EOF
     print "=" * 80 + "\n"
     puts test_class_scaffold
   else
-    # STDERR.puts "Writing to #{c}"
-    open(c,"w") do |f|
+    fn = struct[1][:pkg].nil? ? c : "src/test/java/" + struct[1][:pkg].gsub('.','/') + "/#{c}"
+    # STDERR.puts "Writing to #{fn}"
+    open(fn,"w") do |f|
       f.puts test_class_scaffold
     end
   end
