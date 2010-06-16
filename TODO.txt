@@ -7,3 +7,5 @@
 
 * Irony alert: I encouraged the java developers using the output to write
   tests, yet I have no tests. Bad.
+
+* Try out running this as a Rubygem with the built-in bundling Dave provided.
