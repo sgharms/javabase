@@ -7,9 +7,13 @@ using his GLI toolkit. This is the result. A typical invocation would be:
 
 ./javaBase/bin/javaBase create --class=TigerBar
 
+Obviously, if you install this as a gem you can simply execute:
+
+javaBase create --class=TigerBar
+
 Which generates, in the current directory, TigerBar.java and
 TigerBarTest.java. You can run a "dry-run" of these classes by adding a -d
-flag.
+flag which will print to the screen the classes that would have been created.
 
 More help can be accessed by entering "javaBase help", "javaBase help create"
 is particularly useful.
