@@ -1,11 +1,11 @@
 spec = Gem::Specification.new do |s| 
   s.name = 'javaBase'
   s.version = '0.0.01'
-  s.author = 'Your Name Here'
-  s.email = 'your@email.address.com'
-  s.homepage = 'http://your.website.com'
+  s.author = 'Steven G. Harms'
+  s.email = 'steven_gem@sgharms.oib.com'
+  s.homepage = 'http://github.com/sgharms'
   s.platform = Gem::Platform::RUBY
-  s.summary = 'A description of your project'
+  s.summary = 'A throwaway script for generating basic Maven-compatible Java projects'
 # Add your other files here if you make them
   s.files = %w(
 bin/javaBase
